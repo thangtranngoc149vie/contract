@@ -1,39 +1,26 @@
-using System;
 using System.Data;
-using System.IO;
-using System.Threading.Tasks;
 using Contracts.Api;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
-using Xunit;
+using Testcontainers.PostgreSql;
 
 namespace Contracts.Api.Tests;
 
 public sealed class ContractsApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlTestcontainer _postgresqlContainer;
+    private readonly PostgreSqlContainer _postgresqlContainer;
 
-    public string ConnectionString => _postgresqlContainer.ConnectionString;
+    public string ConnectionString => _postgresqlContainer.GetConnectionString();
 
     public ContractsApiFactory()
     {
-        var configuration = new PostgreSqlTestcontainerConfiguration
-        {
-            Database = "contracts",
-            Username = "postgres",
-            Password = "postgres"
-        };
-
-        _postgresqlContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-            .WithDatabase(configuration)
-            .WithImage("postgres:15-alpine")
-            .WithCleanUp(true)
+        _postgresqlContainer = new PostgreSqlBuilder()
+            .WithDatabase("contracts")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
             .Build();
     }
 
@@ -63,7 +50,7 @@ public sealed class ContractsApiFactory : WebApplicationFactory<Program>, IAsync
         await command.ExecuteNonQueryAsync();
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    public async Task DisposeAsync()
     {
         await _postgresqlContainer.DisposeAsync();
     }
