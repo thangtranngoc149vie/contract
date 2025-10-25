@@ -1,0 +1,45 @@
+### Contracts metadata
+GET http://localhost:5249/api/v1/contracts/meta
+
+### Search projects
+GET http://localhost:5249/api/v1/projects?keyword=toa&page=1&page_size=5
+
+### Search bid packages
+GET http://localhost:5249/api/v1/bid-packages?project_id={{projectId}}&keyword=pccc&page=1&page_size=5
+
+### Check duplicate code
+HEAD http://localhost:5249/api/v1/contracts/exists?project_id={{projectId}}&code=CTR001
+
+### Validate draft contract
+POST http://localhost:5249/api/v1/contracts/validate
+Content-Type: application/json
+
+{
+  "scope_type": "project",
+  "project_id": "{{projectId}}",
+  "code": "CTR001",
+  "name": "Hop dong demo",
+  "value_vnd": 1000000,
+  "warranty_value_vnd": 0,
+  "start_date": "2025-01-01",
+  "end_date": "2025-02-01",
+  "payment_schedule": []
+}
+
+### Create contract
+POST http://localhost:5249/api/v1/contracts
+Content-Type: application/json
+X-User-Id: 00000000-0000-0000-0000-000000000001
+X-Roles: Contract.Create
+
+{
+  "scope_type": "project",
+  "project_id": "{{projectId}}",
+  "code": "CTR001",
+  "name": "Hop dong demo",
+  "value_vnd": 1000000,
+  "warranty_value_vnd": 0,
+  "start_date": "2025-01-01",
+  "end_date": "2025-02-01",
+  "payment_schedule": []
+}
